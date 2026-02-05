@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity Forum // GRID.ACCESS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-color: #0d0221;
+            --sidebar-bg: #0a011a;
+            --neon-pink: #ff0055;
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bd00ff;
+            --text-color: #e0e0e0;
+            --panel-bg: rgba(20, 10, 40, 0.7);
+            --header-height: 60px;
+        }
+
+        /* --- Global Reset & Base --- */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(13, 2, 33, 0.9) 0%, rgba(13, 2, 33, 1) 100%),
+                url('data:image/svg+xml;utf8,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h40v40H0z" fill="none"/><path d="M0 39h40M39 0v40" stroke="rgba(0, 243, 255, 0.05)" stroke-width="1"/></svg>');
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 8px var(--neon-cyan);
+        }
+
+        /* --- Typography --- */
+        h1,
+        h2,
+        h3,
+        h4,
+        .mono {
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        h1 {
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        /* --- Login Page --- */
+        .login-wrapper {
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .login-card {
+            background: rgba(10, 5, 20, 0.9);
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), inset 0 0 20px rgba(0, 243, 255, 0.1);
+            padding: 40px;
+            width: 400px;
+            max-width: 90%;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
+        }
+
+        .login-card:before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-pink), transparent, var(--neon-cyan));
+            z-index: -1;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
+            opacity: 0.5;
+        }
+
+        .login-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .login-tab.active {
+            color: var(--neon-cyan);
+            border-bottom: 2px solid var(--neon-cyan);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            color: white;
+            font-family: 'Share Tech Mono', monospace;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+        }
+
+        .btn-neon {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-neon:hover {
+            background: var(--neon-cyan);
+            color: black;
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        /* --- Setup Dashboard Layout --- */
+        .app-container {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            grid-template-rows: var(--header-height) 1fr;
+            height: 100vh;
+            grid-template-areas:
+                "header header header"
+                "sidebar content widgets";
+        }
+
+        /* Header */
+        .app-header {
+            grid-area: header;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+            backdrop-filter: blur(5px);
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            color: var(--neon-pink);
+            text-shadow: 2px 2px 0px rgba(255, 0, 85, 0.3);
+        }
+
+        /* Sidebar */
+        .app-sidebar {
+            grid-area: sidebar;
+            background: var(--sidebar-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-card {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            border: 2px solid var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-family: 'Share Tech Mono', monospace;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            color: #888;
+        }
+
+        .nav-link.active {
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--neon-cyan);
+            border-left: 3px solid var(--neon-cyan);
+        }
+
+        /* Content Feed */
+        .app-content {
+            grid-area: content;
+            padding: 20px 40px;
+            overflow-y: auto;
+        }
+
+        .feed-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .post-card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .post-meta {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .post-body {
+            padding: 20px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .post-footer {
+            padding: 10px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+
+        .post-title {
+            color: var(--neon-cyan);
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        /* Widgets */
+        .app-widgets {
+            grid-area: widgets;
+            padding: 20px;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 5, 25, 0.5);
+        }
+
+        .widget {
+            margin-bottom: 30px;
+        }
+
+        .widget-title {
+            color: var(--neon-pink);
+            border-bottom: 1px solid var(--neon-pink);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            background: rgba(255, 0, 85, 0.1);
+            color: var(--neon-pink);
+            padding: 3px 8px;
+            border-radius: 2px;
+            font-size: 0.85em;
+            border: 1px solid rgba(255, 0, 85, 0.3);
+        }
+
+        /* --- Helpers --- */
+        .badge {
+            background: var(--neon-purple);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.7em;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .sys-alias {
+            /* Targeting the vulnerability */
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a011a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-cyan);
+        }
+
+        /* Comment Section */
+        .comments-box {
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 0.9em;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .comment-item {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Flash Messages */
+        .flash-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+    </style>
+    <!-- Simple script to toggle tabs -->
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+
+            if (tab === 'login') {
+                document.getElementById('form-login').style.display = 'block';
+                document.getElementById('form-register').style.display = 'none';
+            } else {
+                document.getElementById('form-login').style.display = 'none';
+                document.getElementById('form-register').style.display = 'block';
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-message" style="border-color: {{ '#ff0055' if category == 'error' else '#00f3ff' }}">
+        [{{ category.upper() }}] :: {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    {% if page == 'login' %}
+    <div class="login-wrapper">
+        <!-- Just for atmosphere -->
+        <div
+            style="position: absolute; color: rgba(255,255,255,0.05); font-size: 20vw; font-weight: bold; pointer-events: none;">
+            FORUM</div>
+
+        <div class="login-card">
+            <h2 style="text-align: center; color: var(--neon-cyan); margin-bottom: 30px;">// SYSTEM.ACCESS</h2>
+
+            <div class="login-tabs">
+                <div id="tab-login" class="login-tab active" onclick="switchTab('login')">Login</div>
+                <div id="tab-register" class="login-tab" onclick="switchTab('register')">New User</div>
+            </div>
+
+            <form id="form-login" method="POST">
+                <input type="hidden" name="action" value="login">
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="Codename" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Passphrase" required>
+                </div>
+                <button type="submit" class="btn-neon">Initialize Link</button>
+            </form>
+
+            <form id="form-register" method="POST" style="display: none;">
+                <input type="hidden" name="action" value="register">
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="New Identity" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Set Passphrase" required>
+                </div>
+                <button type="submit" class="btn-neon"
+                    style="border-color: var(--neon-pink); color: var(--neon-pink);">Establish Identity</button>
+            </form>
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">&lt; ANTIGRAVITY /&gt;</div>
+            <div class="mono" style="font-size: 0.8em; opacity: 0.7;">
+                ENCRYPTION: AES-256 // NODE: 78.44.1 // STATUS: SECURE
+            </div>
+            <div>
+                <a href="{{ url_for('logout') }}" style="color: var(--neon-pink); font-size: 0.8em;">[ TERMINATE SESSION
+                    ]</a>
+            </div>
+        </header>
+
+        <aside class="app-sidebar">
+            <div class="user-card">
+                <div class="avatar-circle"
+                    style="background: {{ user.avatar_color }}20; color: {{ user.avatar_color }}; border-color: {{ user.avatar_color }};">
+                    {{ user.username[0] }}
+                </div>
+                <!-- VULNERABILITY: Stored XSS via Alias -->
+                <h3 class="mono sys-alias" style="margin-bottom: 5px;">{{ user.alias | safe }}</h3>
+                <div style="font-size: 0.8em; opacity: 0.7;">Role: {{ user.role }}</div>
+
+                <form action="{{ url_for('update_profile') }}" method="POST" style="margin-top: 15px;">
+                    <input type="text" name="alias" placeholder="Update System Alias"
+                        style="font-size: 0.8em; padding: 5px; margin-bottom: 5px;">
+                    <button type="submit" class="btn-neon" style="padding: 5px; font-size: 0.7em;">UPDATE</button>
+                </form>
+            </div>
+
+            <nav>
+                <a href="#" class="nav-link active">Main Feed</a>
+                <a href="#" class="nav-link">Private Messages [0]</a>
+                <a href="#" class="nav-link">Exploits Database</a>
+                <a href="#" class="nav-link">Marketplace</a>
+            </nav>
+        </aside>
+
+        <main class="app-content">
+            <!-- New Post Area -->
+            <div class="glow-box"
+                style="margin-bottom: 30px; background: rgba(0, 243, 255, 0.05); padding: 20px; border: 1px solid var(--neon-cyan);">
+                <h3 class="mono" style="margin-top: 0; color: var(--neon-cyan);">>> TRANSMIT DATA</h3>
+                <form action="{{ url_for('create_post') }}" method="POST">
+                    <input type="text" name="title" placeholder="Topic Subject" required style="margin-bottom: 10px;">
+                    <textarea name="content" rows="3" placeholder="Enter message stream..." required
+                        style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; font-family: 'Share Tech Mono'; box-sizing: border-box;"></textarea>
+                    <div style="text-align: right; margin-top: 10px;">
+                        <button type="submit" class="btn-neon"
+                            style="width: auto; padding: 5px 20px;">BROADCAST</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="feed-header">
+                <h2 class="mono">LATEST TRANSMISSIONS</h2>
+            </div>
+
+            {% for post in posts %}
+            <div class="post-card">
+                <div class="post-meta">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div
+                            style="width: 30px; height: 30px; border-radius: 50%; background: {{ post.avatar_color }}; color: black; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            {{ post.username[0] }}
+                        </div>
+                        <div>
+                            <!-- Author Alias also needs to be Safe if we want the XSS to be visible to others on posts -->
+                            <span style="color: {{ post.avatar_color }}; font-weight: bold;">{{ post.alias | safe
+                                }}</span>
+                            {% if post.role == 'Admin' %}<span class="badge" style="background: red;">ADMIN</span>{%
+                            endif %}
+                            {% if post.role == 'VIP' %}<span class="badge">VIP</span>{% endif %}
+                        </div>
+                    </div>
+                    <div>{{ post.timestamp | time_ago }}</div>
+                </div>
+
+                <div class="post-body">
+                    <div class="post-title">{{ post.title | safe }}</div>
+                    <!-- Content is escaped by backend, so we mark safe to render the entities correctly if needed, or just let Jinja render -->
+                    <div style="opacity: 0.9;">{{ post.content | safe }}</div>
+                </div>
+
+                <div class="post-footer">
+                    <form action="{{ url_for('like_post', post_id=post.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" style="background:none; border:none; color: #888; cursor: pointer;">
+                            <span style="{{ 'color: var(--neon-pink);' if user.username in post.likes else '' }}">♥ {{
+                                post.likes|length }}</span> Likes
+                        </button>
+                    </form>
+                    <span>💬 {{ post.comments|length }} Replies</span>
+                    <span>👁 {{ post.views }} Views</span>
+
+                    {% if post.username == user.username or user.role == 'Admin' %}
+                    <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST"
+                        style="display:inline; margin-left: auto;">
+                        <button type="submit"
+                            style="background:none; border:none; color: #555; cursor: pointer; font-size: 0.8em;">[DELETE]</button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                <!-- Comments -->
+                {% if post.comments %}
+                <div class="comments-box">
+                    {% for comment in post.comments %}
+                    <div class="comment-item">
+                        <span style="color: {{ comment.avatar_color }}; font-weight: bold;">{{ comment.alias | safe
+                            }}</span>:
+                        {{ comment.content | safe }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div style="padding: 10px 20px;">
+                    <form action="{{ url_for('comment_post', post_id=post.id) }}" method="POST"
+                        style="display: flex; gap: 10px;">
+                        <input type="text" name="content" placeholder="Write a reply..." required
+                            style="font-size: 0.8em; padding: 8px;">
+                        <button type="submit" class="btn-neon"
+                            style="width: auto; padding: 0 15px; font-size: 0.8em;">></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </main>
+
+        <aside class="app-widgets">
+            <div class="widget">
+                <div class="widget-title">Network Statistics</div>
+                <div class="mono" style="font-size: 0.9em; margin-bottom: 5px;">
+                    Online Nodes: <span style="color: var(--neon-cyan);">{{ online_count }}</span>
+                </div>
+                <div class="mono" style="font-size: 0.9em;">
+                    Bandwidth: <span style="color: var(--neon-pink);">{{ online_count * 12 }} TB/s</span>
+                </div>
+            </div>
+
+            <div class="widget">
+                <div class="widget-title">Trending Tags</div>
+                <div class="tag-cloud">
+                    {% for tag in trending_tags %}
+                    <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="widget">
+                <div class="widget-title">System Messages</div>
+                <div class="mono" style="font-size: 0.8em; opacity: 0.6; line-height: 1.4;">
+                    > Defragmenting sectors...<br>
+                    > IDS signatures updated.<br>
+                    > Firewall integrity: 98%
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    {% endif %}
+
+</body>
+
+</html>
